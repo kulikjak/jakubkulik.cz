@@ -1,0 +1,75 @@
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+
+<?php 
+
+  if (file_exists("../markdown/" . $file . ".md")) {
+    
+    $file = file_get_contents("../markdown/" . $file . ".md");
+    if (!$title) {
+      $str = strtok($file, "\n");
+      $beginning = strpos($str, "<!--") + 4;
+      $ending = strpos($str, "-->");
+
+      $title = trim(substr($str, $beginning, $ending - $beginning));
+    }
+    $Parsedown = new Parsedown();
+    $Parsedown->setBreaksEnabled(true);
+    $Parsedown->setMarkupEscaped(false);
+    $Parsedown->setUrlsLinked(true);
+
+    $result = $Parsedown->text($file);
+
+  } else {
+
+    ob_start();
+    include('parts/404.phtml');
+    $result = ob_get_clean();
+    $title = "404 Not Found";
+
+  }
+?>
+
+  <title><?= $title ?></title>
+  <?php /* <link rel="shortcut icon" type="image/png" href="/favicon.png"> */ ?>
+  
+  <meta name="author" content="Jakub Kulík">
+  <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/css/main.css">
+  <link rel="stylesheet" type="text/css" href="/css/markdown.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="google-site-verification" content="8o97nwQbFj_s0dDTGdONeYByTUsw4rRYytfCXMrTUBo" />
+
+  <link rel="stylesheet" href="/static/highlight/styles/googlecode.css">
+</head>
+<body id="preview">
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <?= $result ?>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-92628862-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+<script type="text/javascript" src="/static/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/static/highlight/highlight.pack.js"></script>
+<script type="text/javascript">
+  hljs.initHighlightingOnLoad();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+/logs/
+/vendor/
+/markdown/
+/public/editor/
+/public/files/
+
+composer.phar
