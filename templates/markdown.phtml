@@ -4,12 +4,9 @@
 
 <?php 
 
-if (file_exists("../markdown/" . $file . ".md")) {
-  $file = file_get_contents("../markdown/" . $file . ".md");
-
+function parse_file($file_path) {
   $values = [];
-  if ($title)
-    $values['title'] = $title;
+  $file = file_get_contents($file_path);
 
   $beginning = strpos($file, "<!--") + 4;
   $ending = strpos($file, "-->");
@@ -18,7 +15,7 @@ if (file_exists("../markdown/" . $file . ".md")) {
   $variables = explode("\n", $content);
 
   foreach ($variables as $key => $value) {
-    preg_match('/\[([\w]+)\]: ([A-Za-z0-9 ]+)/', $value, $matches);
+    preg_match('/\[([\w]+)\]: (.+)/', $value, $matches);
     if (count($matches) != 3)
       continue;
     $values[strtolower($matches[1])] = $matches[2];
@@ -29,15 +26,19 @@ if (file_exists("../markdown/" . $file . ".md")) {
   $Parsedown->setMarkupEscaped(false);
   $Parsedown->setUrlsLinked(true);
 
-  $result = $Parsedown->text($file);
+  $values['__result'] = $Parsedown->text($file);
 
-} else {
+  return $values;
+}
 
+if (file_exists("../markdown/" . $file . ".md"))
+  $values = parse_file("../markdown/" . $file . ".md");
+elseif (substr($file, -1) == '/' && file_exists("../markdown/" . $file . "index.md"))
+  $values = parse_file("../markdown/" . $file . "index.md");
+else {
   ob_start();
   include('parts/404.phtml');
-  $result = ob_get_clean();
-  $title = "404 Not Found";
-
+  $values = array('__result' => ob_get_clean(), 'title' => "404 Not Found");
 }
 
 ?>
@@ -46,8 +47,8 @@ if (file_exists("../markdown/" . $file . ".md")) {
   
   <meta name="author" content="Jakub Kulík">
   <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="/css/main.css">
-  <link rel="stylesheet" type="text/css" href="/css/markdown.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/markdown.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <meta name="google-site-verification" content="8o97nwQbFj_s0dDTGdONeYByTUsw4rRYytfCXMrTUBo" />
@@ -59,7 +60,7 @@ if (file_exists("../markdown/" . $file . ".md")) {
 <div class="container">
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
-      <?= $result ?>
+      <?= $values['__result'] ?>
     </div>
   </div>
 </div>
