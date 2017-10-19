@@ -4,35 +4,45 @@
 
 <?php 
 
-  if (file_exists("../markdown/" . $file . ".md")) {
-    
-    $file = file_get_contents("../markdown/" . $file . ".md");
-    if (!$title) {
-      $str = strtok($file, "\n");
-      $beginning = strpos($str, "<!--") + 4;
-      $ending = strpos($str, "-->");
+if (file_exists("../markdown/" . $file . ".md")) {
+  $file = file_get_contents("../markdown/" . $file . ".md");
 
-      $title = trim(substr($str, $beginning, $ending - $beginning));
-    }
-    $Parsedown = new Parsedown();
-    $Parsedown->setBreaksEnabled(true);
-    $Parsedown->setMarkupEscaped(false);
-    $Parsedown->setUrlsLinked(true);
+  $values = [];
+  if ($title)
+    $values['title'] = $title;
 
-    $result = $Parsedown->text($file);
+  $beginning = strpos($file, "<!--") + 4;
+  $ending = strpos($file, "-->");
 
-  } else {
+  $content = trim(substr($file, $beginning, $ending - $beginning));
+  $variables = explode("\n", $content);
 
-    ob_start();
-    include('parts/404.phtml');
-    $result = ob_get_clean();
-    $title = "404 Not Found";
-
+  foreach ($variables as $key => $value) {
+    preg_match('/\[([\w]+)\]: ([A-Za-z0-9 ]+)/', $value, $matches);
+    if (count($matches) != 3)
+      continue;
+    $values[strtolower($matches[1])] = $matches[2];
   }
+
+  $Parsedown = new Parsedown();
+  $Parsedown->setBreaksEnabled(true);
+  $Parsedown->setMarkupEscaped(false);
+  $Parsedown->setUrlsLinked(true);
+
+  $result = $Parsedown->text($file);
+
+} else {
+
+  ob_start();
+  include('parts/404.phtml');
+  $result = ob_get_clean();
+  $title = "404 Not Found";
+
+}
+
 ?>
 
-  <title><?= $title ?></title>
-  <?php /* <link rel="shortcut icon" type="image/png" href="/favicon.png"> */ ?>
+  <title><?= $values['title'] ?></title>
   
   <meta name="author" content="Jakub Kulík">
   <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css">
