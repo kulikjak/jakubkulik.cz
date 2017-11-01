@@ -32,18 +32,17 @@ function parse_file($file_path) {
 
 if (!isset($lang)) $lang = "en";
 
-$message = "";
 $oplang = ($lang == "en") ? "cs" : "en";
 $oplang_message = ($lang == "en") ?
     "This page is only available in czech language." :
     "Tato stránka je dostupná pouze v angličtině";
 
-// Get correct file with lang extension.
+// Get file with lang extension.
 if (file_exists("../markdown/{$file}.{$lang}.md")) {
     $values = parse_file("../markdown/{$file}.{$lang}.md");
 }
 
-// Get correct file without lang extension.
+// Get file without lang extension.
 elseif (file_exists("../markdown/{$file}.md")) {
     $values = parse_file("../markdown/{$file}.md");
 }
@@ -100,12 +99,18 @@ else {
 <?php endif; ?>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <meta name="google-site-verification" content="8o97nwQbFj_s0dDTGdONeYByTUsw4rRYytfCXMrTUBo" />
 
     <link rel="stylesheet" href="/static/highlight/styles/googlecode.css">
 </head>
 <body id="preview">
+
+<?php if (isset($message)): ?>
+    <div class="alert alert-info alert-dismissable">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <?= $message ?>
+    </div>
+<?php endif; ?>
 
 <div class="container">
     <div class="row">

@@ -10,20 +10,32 @@ $app->get('/', function(Request $request, Response $response) {
     return $response;
 });
 
-$app->get('/en', function(Request $request, Response $response) {
+$app->get('/en/', function(Request $request, Response $response) {
     $response = $this->view->render($response, "markdown.phtml", ["file" => "index", "lang" => "en"]);
     return $response;
 });
 
 
-$app->get('/md[/{route:.+}]', function (Request $request, Response $response, $args) {
-    $route = $request->getAttribute('route');
-    $response = $this->view->render($response, "markdown.phtml", ["file" => $route, "lang" => "cs"]);
+$app->get('/md[/{path:.+}]', function (Request $request, Response $response, $args) {
+    $path = $request->getAttribute('path');
+    $response = $this->view->render($response, "markdown.phtml", ["file" => $path, "lang" => "cs"]);
     return $response;
 });
 
-$app->get('/en/md[/{route:.+}]', function (Request $request, Response $response, $args) {
-    $route = $request->getAttribute('route');
-    $response = $this->view->render($response, "markdown.phtml", ["file" => $route, "lang" => "en"]);
+$app->get('/en/md[/{path:.+}]', function (Request $request, Response $response, $args) {
+    $path = $request->getAttribute('path');
+    $response = $this->view->render($response, "markdown.phtml", ["file" => $path, "lang" => "en"]);
     return $response;
+});
+
+
+// Recirects from wrong pages
+$app->get('/en', function(Request $request, Response $response) {
+    return $response->withRedirect('/en/');
+});
+$app->get('/md/', function(Request $request, Response $response) {
+    return $response->withRedirect('/md');
+});
+$app->get('/en/md/', function(Request $request, Response $response) {
+    return $response->withRedirect('/en/md');
 });
