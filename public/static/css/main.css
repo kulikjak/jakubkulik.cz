@@ -1,0 +1,13 @@
+h1, h2, h3, h4, h5, h6
+body, strong, p, i, li {
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-weight: 300 !important;
+}
+
+p {
+  margin: 0 0 10px !important;
+  padding: 0 !important;
+}

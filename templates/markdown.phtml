@@ -88,6 +88,17 @@ else {
     <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/static/css/main.css">
     <link rel="stylesheet" type="text/css" href="/static/css/markdown.css">
+
+<?php if (isset($values["cssfile"])): ?>
+    <link rel="stylesheet" type="text/css" href="/static/css/<?= $values['cssfile'] ?>">
+<?php endif; ?>
+
+<?php if (isset($values["css"])): ?>
+    <style type="text/css">
+        <?= $values['css'] ?>
+    </style>
+<?php endif; ?>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta name="google-site-verification" content="8o97nwQbFj_s0dDTGdONeYByTUsw4rRYytfCXMrTUBo" />
