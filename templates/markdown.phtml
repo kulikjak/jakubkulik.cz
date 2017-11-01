@@ -22,7 +22,10 @@ function parse_file($file_path) {
     $Parsedown->setMarkupEscaped(false);
     $Parsedown->setUrlsLinked(true);
 
-    $values['__result'] = $Parsedown->text($file);
+    $result = $Parsedown->text($file);
+
+    // Add target to outside links to open them in new tab.
+    $values['__result'] = preg_replace("/(<a\\b[^<>]*href=['\"]?http[^<>]+)>/is", "$1 target=\"_blank\">", $result);
 
     return $values;
 }
@@ -35,39 +38,39 @@ $oplang_message = ($lang == "en") ?
     "This page is only available in czech language." :
     "Tato stránka je dostupná pouze v angličtině";
 
-//  Get correct file with lang extension.
+// Get correct file with lang extension.
 if (file_exists("../markdown/{$file}.{$lang}.md")) {
     $values = parse_file("../markdown/{$file}.{$lang}.md");
 }
 
-//  Get correct file without lang extension.
+// Get correct file without lang extension.
 elseif (file_exists("../markdown/{$file}.md")) {
     $values = parse_file("../markdown/{$file}.md");
 }
 
-//  Get file with lang extension of other language.
+// Get file with lang extension of other language.
 elseif (file_exists("../markdown/{$file}.{$oplang}.md")) {
     $values = parse_file("../markdown/{$file}.{$oplang}.md");
     $message = $oplang_message;
 }
 
-//  Get index page with lang extension.
+// Get index page with lang extension.
 elseif (substr($file, -1) == '/' && file_exists("../markdown/{$file}index.{$lang}.md")) {
     $values = parse_file("../markdown/{$file}index.{$lang}.md");
 }
 
-//  Get index page without lang extension.
+// Get index page without lang extension.
 elseif (substr($file, -1) == '/' && file_exists("../markdown/{$file}index.md")) {
     $values = parse_file("../markdown/{$file}index.md");
 }
 
-//  Get index page with lang extension of other language.
+// Get index page with lang extension of other language.
 elseif (substr($file, -1) == '/' && file_exists("../markdown/{$file}index.{$oplang}.md")) {
     $values = parse_file("../markdown/{$file}index.{$oplang}.md");
     $message = $oplang_message;
 }
 
-//  Sadly we don't have this page in any language
+// Sadly we don't have this page in any language
 else {
     $values = parse_file("../markdown/404.md");
 }
