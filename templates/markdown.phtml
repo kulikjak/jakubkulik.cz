@@ -4,12 +4,15 @@ function parse_file($file_path) {
     $values = [];
     $file = file_get_contents($file_path);
 
+    // Find comment with informations inside the documents
     $beginning = strpos($file, "<!--") + 4;
     $ending = strpos($file, "-->");
 
+    // Get trimmed lines from the comment
     $content = trim(substr($file, $beginning, $ending - $beginning));
     $variables = explode("\n", $content);
 
+    // Get each variable from given file
     foreach ($variables as $key => $value) {
         preg_match('/\[([\w]+)\]: (.+)/', $value, $matches);
         if (count($matches) != 3)
@@ -17,6 +20,10 @@ function parse_file($file_path) {
         $values[strtolower($matches[1])] = $matches[2];
     }
 
+    // Remove information comment from the markdown content
+    $file = substr($file, 0, $beginning - 4) . substr($file, $ending + 3);
+
+    // Parse the resulting markdown with Parsedown library
     $Parsedown = new Parsedown();
     $Parsedown->setBreaksEnabled(true);
     $Parsedown->setMarkupEscaped(false);
@@ -26,6 +33,7 @@ function parse_file($file_path) {
 
     // Add target to outside links to open them in new tab.
     $values['__result'] = preg_replace("/(<a\\b[^<>]*href=['\"]?http[^<>]+)>/is", "$1 target=\"_blank\">", $result);
+    $values['__mtime'] = filemtime($file_path);
 
     return $values;
 }
@@ -116,6 +124,7 @@ else {
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <?= $values['__result'] ?>
+            <footer>last modified: <?= date("d/m/Y H:i:s", $values['__mtime']) ?></footer>
         </div>
     </div>
 </div>

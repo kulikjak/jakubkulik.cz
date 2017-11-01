@@ -1,5 +1,5 @@
 h1, h2, h3, h4, h5, h6
-body, strong, p, i, li {
+body, strong, p, i, li, footer {
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
@@ -10,4 +10,13 @@ h1,h2,h3,h4,h5,h6 {
 p {
   margin: 0 0 10px !important;
   padding: 0 !important;
+  text-align: justify;
+}
+
+footer {
+	padding: 10px;
+	margin-top: 20px;
+	font-size: 80%;
+	text-align: right;
+	font-style: italic;
 }
